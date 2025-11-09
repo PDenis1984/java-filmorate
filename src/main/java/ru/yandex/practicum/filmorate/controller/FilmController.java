@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
@@ -9,11 +10,10 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/films")
 public class FilmController implements CrudInterface<Film> {
-
-    private final static Logger log = LoggerFactory.getLogger(FilmController.class);
 
     private final FilmService filmService;
 
@@ -31,7 +31,7 @@ public class FilmController implements CrudInterface<Film> {
 
     @PutMapping()
     @Override
-        public Film update(@RequestBody Film film) {
+    public Film update(@RequestBody Film film) {
 
         return film;
     }
@@ -40,7 +40,7 @@ public class FilmController implements CrudInterface<Film> {
     @GetMapping
     public List<Film> getAll() {
 
-        return filmMap.values().stream().toList();
+        return filmService.getFilms();
     }
     @Override
     @GetMapping("/films/{id}")
