@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.model.exception.ValidationException;
 
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +21,7 @@ public class UserService {
 
         this.userMap = new HashMap<>();
     }
+
     public User getUser(long id) {
 
         log.info("Поиск пользователя с id={}", id);
@@ -42,7 +42,7 @@ public class UserService {
         try {
             checkUserValid(user);
             userMap.put(sequence++, user);
-        }  catch (ValidationException validationException) {
+        } catch (ValidationException validationException) {
             log.error(validationException.getMessage());
         }
         return user;
@@ -61,14 +61,11 @@ public class UserService {
         return user;
     }
 
-    private void checkUserValid(User user) throws ValidationException {
-
-        if (!user.getEnail().contains("@")) {
-            throw new ValidationException("Неверный формат email");
-        } else if (user.getLogin().isBlank()) {
-            throw new ValidationException("Имя пользователя не должно пустым или содержать пробелы");
-        } else if (user.getDateOfBirth().isAfter(LocalDate.now())) {
-            throw new ValidationException("Дата рождения не должна быть меньше текущей даты");
+    private boolean checkUserValid(User user) throws ValidationException {
+//Здесь все проверки должны сработать на контроллере за счет аннотации @valid, кроме пробела в логине
+        if (user.getLogin().contains(" ")) {
+            throw new ValidationException("Логин не должен содержать пробелы");
         }
+        return true;
     }
 }
