@@ -54,7 +54,7 @@ public class FilmService {
             throw new ValidationException("Дата ерлиза фильма не ранее 28 декабря 1895 года");
         } else if (film.getDuration().toMinutes() < 0) {
 
-            throw new ValidationException("Длительность фильма должна быть положительным числом");
+             throw new ValidationException("Длительность фильма должна быть положительным числом");
         }
 
         return true;

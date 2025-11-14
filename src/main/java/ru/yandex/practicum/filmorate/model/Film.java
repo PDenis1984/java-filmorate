@@ -1,8 +1,9 @@
 package ru.yandex.practicum.filmorate.model;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -13,18 +14,17 @@ import java.time.LocalDate;
 @Data
 @Builder
 @EqualsAndHashCode(of = {"id","name"})
+@AllArgsConstructor
 public class Film {
 
     private final Long id;
 
-    @NotBlank
     private final String name;
 
-    @Size(min=1, max=200)
     private String description;
 
-
     private LocalDate releaseDate;
+
     private Duration duration;
 
 }

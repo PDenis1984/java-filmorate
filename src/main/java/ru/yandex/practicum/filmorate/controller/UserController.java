@@ -23,8 +23,8 @@ public class UserController implements CrudInterface<User> {
     }
 
     @Override
-    @GetMapping("/api/v1/users/{id}")
-    public User read(@Valid  @RequestBody Long id) {
+    @GetMapping("/{id}")
+    public User read(@Valid  @PathVariable Long id) {
 
         return userService.getUser(id);
     }
@@ -33,12 +33,12 @@ public class UserController implements CrudInterface<User> {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public User  create(@Valid  @RequestBody User user) {
-
+        log.info(user.toString());
         return userService.createUser(user);
     }
 
     @Override
-    @PutMapping("/api/v1/users/{id}")
+    @PutMapping("/{id}")
     public User update(@Valid @RequestBody User user) {
 
         return userService.updateUser(user);

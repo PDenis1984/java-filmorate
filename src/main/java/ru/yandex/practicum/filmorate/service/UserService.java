@@ -41,11 +41,19 @@ public class UserService {
         log.trace("Создание пользователя: {}", user.toString());
         try {
             checkUserValid(user);
-            userMap.put(sequence++, user);
+            long userID = ++sequence;
+            User createdUser =  User.builder()
+                    .login(user.getLogin())
+                    .email(user.getEmail())
+                    .name(user.getName())
+                    .id(userID).dateOfBirth(user.getDateOfBirth()).build();
+
+            userMap.put(userID, createdUser);
+            return createdUser;
         } catch (ValidationException validationException) {
             log.error(validationException.getMessage());
+            return user;
         }
-        return user;
     }
 
     public User updateUser(User user) {
@@ -62,7 +70,7 @@ public class UserService {
     }
 
     private boolean checkUserValid(User user) throws ValidationException {
-//Здесь все проверки должны сработать на контроллере за счет аннотации @valid, кроме пробела в логине
+        //Здесь все проверки должны сработать на контроллере за счет аннотации @valid, кроме пробела в логине
         if (user.getLogin().contains(" ")) {
             throw new ValidationException("Логин не должен содержать пробелы");
         }
