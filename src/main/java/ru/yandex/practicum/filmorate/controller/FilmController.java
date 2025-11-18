@@ -28,12 +28,14 @@ public class FilmController implements CrudInterface<Film> {
     @ResponseStatus(HttpStatus.CREATED)
     public Film create(@RequestBody Film film) {
 
+        log.info("Добавление фильма");
+        log.debug("Добавление фильма:{}", film.toString());
         return filmService.createFilm(film);
     }
 
     @PutMapping()
     @Override
-    public Film update(@RequestBody Film film) {
+    public Film update(@PathVariable long id, @RequestBody Film film) {
 
         return film;
     }

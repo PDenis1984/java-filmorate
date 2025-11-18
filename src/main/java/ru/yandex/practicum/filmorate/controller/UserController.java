@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.intf.CrudInterface;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.model.exception.ValidationException;
+import ru.yandex.practicum.filmorate.model.exception.UserNotFoundException;
 
 import java.util.List;
 
@@ -24,30 +26,51 @@ public class UserController implements CrudInterface<User> {
 
     @Override
     @GetMapping("/{id}")
-    public User read(@Valid  @PathVariable Long id) {
+    public User read(@Valid @PathVariable Long id) {
 
+        log.info("Получение пользователя с id = {}" , id);
         return userService.getUser(id);
     }
 
     @Override
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public User  create(@Valid  @RequestBody User user) {
-        log.info(user.toString());
+    public User create(@Valid  @RequestBody User user) {
+
+        log.info("Создание пользователя");
+        log.debug("Создание пользователя:{}", user.toString());
         return userService.createUser(user);
     }
 
     @Override
     @PutMapping("/{id}")
-    public User update(@Valid @RequestBody User user) {
+    public User update(@PathVariable long id, @Valid @RequestBody User user) {
 
-        return userService.updateUser(user);
+        log.info("Обновление пользователя с id = {}", id);
+        log.debug("Обновление пользователя: {}", user.toString());
+        return userService.updateUser(user,id);
     }
 
     @Override
     @GetMapping
     public List<User> getAll() {
 
+        log.info("Получение списка пользователей");
         return userService.getUsers();
+    }
+
+    //Exception Handlers
+    @ExceptionHandler(ValidationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String handleValidationException(ValidationException ex) {
+        log.warn("Validation error: {}", ex.getMessage());
+        return ex.getMessage();
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public String handleUserNotFoundException(UserNotFoundException ex) {
+        log.warn("User not found: {}", ex.getMessage());
+        return ex.getMessage();
     }
 }

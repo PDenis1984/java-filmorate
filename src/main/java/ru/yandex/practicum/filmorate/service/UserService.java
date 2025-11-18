@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.exception.ValidationException;
 
 import java.util.HashMap;
@@ -25,7 +26,13 @@ public class UserService {
     public User getUser(long id) {
 
         log.info("Поиск пользователя с id={}", id);
-        return userMap.get(id);
+
+        User user = userMap.get(id);
+        if (user == null) {
+            log.error("Пользователь с id = {} не найден", id);;
+            throw new UserNotFoundException("Пользователь с id =  " + id + " не найден");
+        }
+        return user;
 
     }
 
@@ -35,7 +42,7 @@ public class UserService {
         return userMap.values().stream().toList();
     }
 
-    public User createUser(User user) {
+    public User createUser(User user) throws ValidationException {
 
         log.info("Создание пользователя");
         log.trace("Создание пользователя: {}", user.toString());
@@ -52,14 +59,19 @@ public class UserService {
             return createdUser;
         } catch (ValidationException validationException) {
             log.error(validationException.getMessage());
-            return user;
+            throw new ValidationException(validationException.getMessage());
         }
     }
 
-    public User updateUser(User user) {
+    public User updateUser(User user, long id) {
 
-        log.info("Обновление пользователя");
+        log.info("Обновление пользователя c id = {}", id);
         log.trace("Обновление пользователя: {}", user.toString());
+
+        if (userMap.get(id) == null) {
+            log.info("Пользователь с id = {} не найден. Создаем пользователя", id);
+            return this.createUser(user);
+        }
         try {
             checkUserValid(user);
             userMap.put(user.getId(), user);
