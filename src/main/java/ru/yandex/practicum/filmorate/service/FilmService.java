@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.exception.ValidationException;
 
 import java.time.LocalDate;
@@ -24,7 +25,26 @@ public class FilmService {
     }
     public Film createFilm(Film film) {
 
+        checkFilmValid(film);
         filmMap.put(sequence++, film);
+        return film;
+    }
+
+    public Film updateFilm(Film film, long id) {
+
+        log.info("Обновление фильма c id = {}", id);
+        log.trace("Обновление фильма: {}", film.toString());
+
+        if (filmMap.get(id) == null) {
+            log.info("Фильм с id = {} не найден. Создаем Фильм", id);
+            return this.createFilm(film);
+        }
+        try {
+            checkFilmValid(film);
+            filmMap.put(id, film);
+        } catch (ValidationException validationException) {
+            log.error(validationException.getMessage());
+        }
         return film;
     }
 
@@ -34,7 +54,7 @@ public class FilmService {
 
             return filmMap.get(id);
         }
-        return null;
+        throw new FilmNotFoundException("Фильм с id = " + id + " не найден");
     }
 
     public List<Film> getFilms() {

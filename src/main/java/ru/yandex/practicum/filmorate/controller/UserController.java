@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.intf.CrudInterface;
+import ru.yandex.practicum.filmorate.model.ErrorResponse;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.model.exception.ValidationException;
@@ -62,15 +63,15 @@ public class UserController implements CrudInterface<User> {
     //Exception Handlers
     @ExceptionHandler(ValidationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String handleValidationException(ValidationException ex) {
-        log.warn("Validation error: {}", ex.getMessage());
-        return ex.getMessage();
+    public ErrorResponse handleValidationException(ValidationException vEx) {
+        log.error("Ошибка валидации: {}", vEx.getMessage());
+        return new ErrorResponse(vEx.getMessage(), 400);
     }
 
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String handleUserNotFoundException(UserNotFoundException ex) {
-        log.warn("User not found: {}", ex.getMessage());
-        return ex.getMessage();
+    public ErrorResponse handleUserNotFoundException(UserNotFoundException uEx) {
+        log.warn("Пользователь не найден: {}", uEx.getMessage());
+        return new ErrorResponse(uEx.getMessage(), 404);
     }
 }

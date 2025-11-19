@@ -74,7 +74,7 @@ public class UserService {
         }
         try {
             checkUserValid(user);
-            userMap.put(user.getId(), user);
+            userMap.put(id, user);
         } catch (ValidationException validationException) {
             log.error(validationException.getMessage());
         }
