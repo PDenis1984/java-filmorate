@@ -28,6 +28,6 @@ public class User {
     private String name;
     // @NonNull
     @Past(message = "Дата рождения должна быть в прошлом")
-    private LocalDate dateOfBirth;
+    private LocalDate birthday;
 
 }
