@@ -53,9 +53,11 @@ public class UserService {
             User createdUser = User.builder()
                     .login(user.getLogin())
                     .email(user.getEmail())
-                    .name(user.getName())
                     .id(userID).birthday(user.getBirthday()).build();
+            if (user.getName() != null) {
 
+               createdUser.setName(user.getName());
+            }
             userMap.put(userID, createdUser);
             return createdUser;
         } catch (ValidationException validationException) {
