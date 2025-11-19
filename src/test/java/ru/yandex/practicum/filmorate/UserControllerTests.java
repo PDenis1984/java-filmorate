@@ -65,7 +65,7 @@ class UserControllerTests {
 
         String userJson = "{\"email\": \"test@denis.com\", \"login\": \"testlogin\", \"name\": \"Test User\", \"dateOfBirth\": \"1980-01-01\"}";
 
-        mockMvc.perform(post("/api/v1/users")
+        mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(userJson))
                 .andExpect(status().isCreated())
@@ -81,7 +81,7 @@ class UserControllerTests {
     void getUserWithExistingIdTest() throws Exception {
         when(userService.getUser(1L)).thenReturn(validUser);
 
-        mockMvc.perform(get("/api/v1/users/1"))
+        mockMvc.perform(get("/users/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1L))
                 .andExpect(jsonPath("$.email").value("test@denis.com"))
@@ -94,7 +94,7 @@ class UserControllerTests {
     void getUserWithNonExistingIdTest() throws Exception {
         when(userService.getUser(999L)).thenThrow(new UserNotFoundException("User not found"));
 
-        mockMvc.perform(get("/api/v1/users/999"))
+        mockMvc.perform(get("/users/999"))
                 .andExpect(status().isNotFound());
 
         verify(userService, times(1)).getUser(999L);
@@ -106,7 +106,7 @@ class UserControllerTests {
 
         String updatedUserJson = "{\"email\": \"updated@denis.com\", \"login\": \"updatedlogin\", \"name\": \"Updated User\", \"dateOfBirth\": \"1980-01-01\"}";
 
-        mockMvc.perform(put("/api/v1/users/1")
+        mockMvc.perform(put("/users/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updatedUserJson))
                 .andExpect(status().isOk())
@@ -124,7 +124,7 @@ class UserControllerTests {
 
         String userJson = "{\"email\": \"test@denis.com\", \"login\": \"testlogin\", \"name\": \"Test User\", \"dateOfBirth\": \"1980-01-01\"}";
 
-        mockMvc.perform(put("/api/v1/users/999")
+        mockMvc.perform(put("/users/999")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(userJson))
                 .andExpect(status().isOk());
@@ -137,7 +137,7 @@ class UserControllerTests {
         List<User> users = List.of(validUser, updatedUser);
         when(userService.getUsers()).thenReturn(users);
 
-        mockMvc.perform(get("/api/v1/users"))
+        mockMvc.perform(get("/users"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2))
                 .andExpect(jsonPath("$[0].id").value(1L))
@@ -152,7 +152,7 @@ class UserControllerTests {
     void getAllUsersWhenNoUsersTest() throws Exception {
         when(userService.getUsers()).thenReturn(List.of());
 
-        mockMvc.perform(get("/api/v1/users"))
+        mockMvc.perform(get("/users"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(0));
 
@@ -163,7 +163,7 @@ class UserControllerTests {
     void createUserWithInvalidEmailTest() throws Exception {
         String invalidUserJson =  "{\"email\": \"invalid-email\", \"login\": \"validlogin\", \"name\": \"Test User\", \"dateOfBirth\": \"1980-01-01\"}";
 
-        mockMvc.perform(post("/api/v1/users")
+        mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(invalidUserJson))
                 .andExpect(status().isBadRequest());
@@ -175,7 +175,7 @@ class UserControllerTests {
     void createUserWithEmptyEmailTest() throws Exception {
         String invalidUserJson = "{\"email\": \"\", \"login\": \"validlogin\", \"name\": \"Test User\", \"dateOfBirth\": \"1980-01-01\"}";
 
-        mockMvc.perform(post("/api/v1/users")
+        mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(invalidUserJson))
                 .andExpect(status().isBadRequest());
@@ -187,7 +187,7 @@ class UserControllerTests {
     void createUserWithEmptyLoginTest() throws Exception {
         String invalidUserJson = "{\"email\": \"test@denis.com\", \"login\": \"\", \"name\": \"Test User\", \"dateOfBirth\": \"1980-01-01\"}";
 
-        mockMvc.perform(post("/api/v1/users")
+        mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(invalidUserJson))
                 .andExpect(status().isBadRequest());
@@ -202,7 +202,7 @@ class UserControllerTests {
         when(userService.createUser(any(User.class)))
                 .thenThrow(new ValidationException("Логин не должен содержать пробелы"));
 
-        mockMvc.perform(post("/api/v1/users")
+        mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(invalidUserJson))
                 .andExpect(status().isBadRequest());
@@ -217,7 +217,7 @@ class UserControllerTests {
         String futureDate = LocalDate.now().plusDays(1).toString();
         String invalidUserJson = String.format("{\"email\": \"test@denis.com\", \"login\": \"validlogin\", \"name\": \"Test User\", \"dateOfBirth\": \"%s\"}", futureDate);
 
-        mockMvc.perform(post("/api/v1/users")
+        mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(invalidUserJson))
                 .andExpect(status().isBadRequest());
@@ -229,7 +229,7 @@ class UserControllerTests {
     void updateUserWithInvalidDataTest() throws Exception {
         String invalidUserJson = "{\"email\": \"invalid-email\", \"login\": \"\", \"name\": \"Test User\", \"dateOfBirth\": \"1980-01-01\"}";
 
-        mockMvc.perform(put("/api/v1/users/1")
+        mockMvc.perform(put("/users/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(invalidUserJson))
                 .andExpect(status().isBadRequest());
@@ -241,7 +241,7 @@ class UserControllerTests {
     void createUserWithNullEmailTest() throws Exception {
         String invalidUserJson = "{\"login\": \"validlogin\", \"name\": \"Test User\", \"dateOfBirth\": \"1980-01-01\"}";
 
-        mockMvc.perform(post("/api/v1/users")
+        mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(invalidUserJson))
                 .andExpect(status().isBadRequest());
@@ -253,7 +253,7 @@ class UserControllerTests {
     void createUserWithNullLoginTest() throws Exception {
         String invalidUserJson = "{\"email\": \"test@denis.com\", \"name\": \"Test User\", \"dateOfBirth\": \"1980-01-01\"}";
 
-        mockMvc.perform(post("/api/v1/users")
+        mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(invalidUserJson))
                 .andExpect(status().isBadRequest());

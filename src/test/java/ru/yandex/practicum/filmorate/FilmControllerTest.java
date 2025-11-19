@@ -66,7 +66,7 @@ class FilmControllerTest {
 
         String filmJson = "{\"name\": \"Test Film\", \"description\": \"Test description\", \"releaseDate\": \"1980-01-01\", \"duration\": 290}";
 
-        mockMvc.perform(post("/api/v1/films")
+        mockMvc.perform(post("/films")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(filmJson))
                 .andExpect(status().isCreated())
@@ -81,7 +81,7 @@ class FilmControllerTest {
     void getFilmWithExistingIdTest() throws Exception {
         when(filmService.getFilm(1L)).thenReturn(validFilm);
 
-        mockMvc.perform(get("/api/v1/films/1"))
+        mockMvc.perform(get("/films/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1L))
                 .andExpect(jsonPath("$.name").value("Test Film"))
@@ -94,7 +94,7 @@ class FilmControllerTest {
     void getFilmWithNonExistingIdTest() throws Exception {
         when(filmService.getFilm(999L)).thenThrow(new FilmNotFoundException("Film not found"));
 
-        mockMvc.perform(get("/api/v1/films/999"))
+        mockMvc.perform(get("/films/999"))
                 .andExpect(status().isNotFound());
 
         verify(filmService, times(1)).getFilm(999L);
@@ -106,7 +106,7 @@ class FilmControllerTest {
 
         String updatedFilmJson = "{\"name\": \"Updated Film\", \"description\": \"Updated description\", \"releaseDate\": \"1980-01-01\", \"duration\": 150}";
 
-        mockMvc.perform(put("/api/v1/films/1")
+        mockMvc.perform(put("/films/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updatedFilmJson))
                 .andExpect(status().isOk())
@@ -124,7 +124,7 @@ class FilmControllerTest {
 
         String filmJson = "{\"name\": \"Test Film\", \"description\": \"Test description\", \"releaseDate\": \"1980-01-01\", \"duration\": 120}";
 
-        mockMvc.perform(put("/api/v1/films/999")
+        mockMvc.perform(put("/films/999")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(filmJson))
                 .andExpect(status().isOk());
@@ -137,7 +137,7 @@ class FilmControllerTest {
         List<Film> films = List.of(validFilm, updatedFilm);
         when(filmService.getFilms()).thenReturn(films);
 
-        mockMvc.perform(get("/api/v1/films"))
+        mockMvc.perform(get("/films"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2))
                 .andExpect(jsonPath("$[0].id").value(1L))
@@ -152,7 +152,7 @@ class FilmControllerTest {
     void getAllFilmsWhenNoFilmsTest() throws Exception {
         when(filmService.getFilms()).thenReturn(List.of());
 
-        mockMvc.perform(get("/api/v1/films"))
+        mockMvc.perform(get("/films"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(0));
 
@@ -166,7 +166,7 @@ class FilmControllerTest {
         when(filmService.createFilm(any(Film.class)))
                 .thenThrow(new ValidationException("Название фильма не должно быть пустым"));
 
-        mockMvc.perform(post("/api/v1/films")
+        mockMvc.perform(post("/films")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(invalidFilmJson))
                 .andExpect(status().isBadRequest());
@@ -182,7 +182,7 @@ class FilmControllerTest {
         when(filmService.createFilm(any(Film.class)))
                 .thenThrow(new ValidationException("Название фильма не должно быть пустым"));
 
-        mockMvc.perform(post("/api/v1/films")
+        mockMvc.perform(post("/films")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(invalidFilmJson))
                 .andExpect(status().isBadRequest());
@@ -198,7 +198,7 @@ class FilmControllerTest {
         when(filmService.createFilm(any(Film.class)))
                 .thenThrow(new ValidationException("Описание не может превышать 200 символов"));
 
-        mockMvc.perform(post("/api/v1/films")
+        mockMvc.perform(post("/films")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(invalidFilmJson))
                 .andExpect(status().isBadRequest());
@@ -214,7 +214,7 @@ class FilmControllerTest {
         when(filmService.createFilm(any(Film.class)))
                 .thenThrow(new ValidationException("Дата релиза не может быть раньше 28 декабря 1895 года"));
 
-        mockMvc.perform(post("/api/v1/films")
+        mockMvc.perform(post("/films")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(invalidFilmJson))
                 .andExpect(status().isBadRequest());
@@ -230,7 +230,7 @@ class FilmControllerTest {
         when(filmService.createFilm(any(Film.class)))
                 .thenThrow(new ValidationException("Продолжительность фильма должна быть положительной"));
 
-        mockMvc.perform(post("/api/v1/films")
+        mockMvc.perform(post("/films")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(invalidFilmJson))
                 .andExpect(status().isBadRequest());
@@ -245,7 +245,7 @@ class FilmControllerTest {
         when(filmService.createFilm(any(Film.class)))
                 .thenThrow(new ValidationException("Продолжительность фильма должна быть положительной"));
 
-        mockMvc.perform(post("/api/v1/films")
+        mockMvc.perform(post("/films")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(invalidFilmJson))
                 .andExpect(status().isBadRequest());
@@ -269,7 +269,7 @@ class FilmControllerTest {
 
         String invalidFilmJson = "{\"name\": \"\", \"description\": \"Test description\", \"releaseDate\": \"1980-01-01\", \"duration\": 120}";
 
-        mockMvc.perform(put("/api/v1/films/1")
+        mockMvc.perform(put("/films/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(invalidFilmJson))
                 .andExpect(status().isBadRequest());
@@ -284,7 +284,7 @@ class FilmControllerTest {
 
         when(filmService.createFilm(any(Film.class))).thenReturn(validFilm);
 
-        mockMvc.perform(post("/api/v1/films")
+        mockMvc.perform(post("/films")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(validFilmJson))
                 .andExpect(status().isCreated());
