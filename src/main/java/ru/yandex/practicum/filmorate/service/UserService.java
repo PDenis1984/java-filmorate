@@ -23,6 +23,7 @@ public class UserService {
         this.userMap = new HashMap<>();
     }
 
+
     public User getUser(long id) {
 
         log.info("Поиск пользователя с id={}", id);
