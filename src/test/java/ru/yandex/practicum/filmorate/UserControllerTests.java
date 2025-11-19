@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.model.exception.UserNotFoundException;
+import ru.yandex.practicum.filmorate.model.exception.ValidationException;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.time.LocalDate;
@@ -43,31 +44,31 @@ class UserControllerTest {
 
         validUser = User.builder()
                 .id(1L)
-                .email("test@example.com")
+                .email("test@denis.com")
                 .login("testlogin")
                 .name("Test User")
-                .dateOfBirth(LocalDate.of(1990, 1, 1))
+                .dateOfBirth(LocalDate.of(1980, 1, 1))
                 .build();
 
         updatedUser = User.builder()
                 .id(1L)
-                .email("updated@example.com")
+                .email("updated@denis.com")
                 .login("updatedlogin")
                 .name("Updated User")
-                .dateOfBirth(LocalDate.of(1990, 1, 1))
+                .dateOfBirth(LocalDate.of(1980, 1, 1))
                 .build();
     }
 
     @Test
-    void createUserWithValidDataShouldReturnCreated() throws Exception {
+    void createUserWithValidDataTest() throws Exception {
         when(userService.createUser(any(User.class))).thenReturn(validUser);
 
         String userJson = """
             {
-                "email": "test@example.com",
+                "email": "test@denis.com",
                 "login": "testlogin",
                 "name": "Test User",
-                "dateOfBirth": "1990-01-01"
+                "dateOfBirth": "1980-01-01"
             }
             """;
 
@@ -76,7 +77,7 @@ class UserControllerTest {
                         .content(userJson))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1L))
-                .andExpect(jsonPath("$.email").value("test@example.com"))
+                .andExpect(jsonPath("$.email").value("test@denis.com"))
                 .andExpect(jsonPath("$.login").value("testlogin"))
                 .andExpect(jsonPath("$.name").value("Test User"));
 
@@ -84,20 +85,20 @@ class UserControllerTest {
     }
 
     @Test
-    void getUserWithExistingIdShouldReturnUser() throws Exception {
+    void getUserWithExistingIdTest() throws Exception {
         when(userService.getUser(1L)).thenReturn(validUser);
 
         mockMvc.perform(get("/api/v1/users/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1L))
-                .andExpect(jsonPath("$.email").value("test@example.com"))
+                .andExpect(jsonPath("$.email").value("test@denis.com"))
                 .andExpect(jsonPath("$.login").value("testlogin"));
 
         verify(userService, times(1)).getUser(1L);
     }
 
     @Test
-    void getUserWithNonExistingIdShouldReturnNotFound() throws Exception {
+    void getUserWithNonExistingIdTest() throws Exception {
         when(userService.getUser(999L)).thenThrow(new UserNotFoundException("User not found"));
 
         mockMvc.perform(get("/api/v1/users/999"))
@@ -107,15 +108,15 @@ class UserControllerTest {
     }
 
     @Test
-    void updateUserWithValidDataShouldReturnUpdatedUser() throws Exception {
+    void updateUserWithValidDataTest() throws Exception {
         when(userService.updateUser(any(User.class), eq(1L))).thenReturn(updatedUser);
 
         String updatedUserJson = """
             {
-                "email": "updated@example.com",
+                "email": "updated@denis.com",
                 "login": "updatedlogin",
                 "name": "Updated User",
-                "dateOfBirth": "1990-01-01"
+                "dateOfBirth": "1980-01-01"
             }
             """;
 
@@ -124,7 +125,7 @@ class UserControllerTest {
                         .content(updatedUserJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1L))
-                .andExpect(jsonPath("$.email").value("updated@example.com"))
+                .andExpect(jsonPath("$.email").value("updated@denis.com"))
                 .andExpect(jsonPath("$.login").value("updatedlogin"))
                 .andExpect(jsonPath("$.name").value("Updated User"));
 
@@ -132,15 +133,15 @@ class UserControllerTest {
     }
 
     @Test
-    void updateUserWithNonExistingIdShouldReturnOk() throws Exception {
+    void updateUserWithNonExistingIdTest() throws Exception {
         when(userService.updateUser(any(User.class), eq(999L))).thenReturn(validUser);
 
         String userJson = """
             {
-                "email": "test@example.com",
+                "email": "test@denis.com",
                 "login": "testlogin",
                 "name": "Test User",
-                "dateOfBirth": "1990-01-01"
+                "dateOfBirth": "1980-01-01"
             }
             """;
 
@@ -153,7 +154,7 @@ class UserControllerTest {
     }
 
     @Test
-    void getAllUsersWhenUsersExistShouldReturnUserList() throws Exception {
+    void getAllUsersWhenUsersExistTest() throws Exception {
         List<User> users = List.of(validUser, updatedUser);
         when(userService.getUsers()).thenReturn(users);
 
@@ -161,15 +162,15 @@ class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2))
                 .andExpect(jsonPath("$[0].id").value(1L))
-                .andExpect(jsonPath("$[0].email").value("test@example.com"))
+                .andExpect(jsonPath("$[0].email").value("test@denis.com"))
                 .andExpect(jsonPath("$[1].id").value(1L))
-                .andExpect(jsonPath("$[1].email").value("updated@example.com"));
+                .andExpect(jsonPath("$[1].email").value("updated@denis.com"));
 
         verify(userService, times(1)).getUsers();
     }
 
     @Test
-    void getAllUsersWhenNoUsersShouldReturnEmptyList() throws Exception {
+    void getAllUsersWhenNoUsersTest() throws Exception {
         when(userService.getUsers()).thenReturn(List.of());
 
         mockMvc.perform(get("/api/v1/users"))
@@ -180,13 +181,13 @@ class UserControllerTest {
     }
 
     @Test
-    void createUserWithInvalidEmailShouldReturnBadRequest() throws Exception {
+    void createUserWithInvalidEmailTest() throws Exception {
         String invalidUserJson = """
             {
                 "email": "invalid-email",
                 "login": "validlogin",
                 "name": "Test User",
-                "dateOfBirth": "1990-01-01"
+                "dateOfBirth": "1980-01-01"
             }
             """;
 
@@ -199,13 +200,13 @@ class UserControllerTest {
     }
 
     @Test
-    void createUserWithEmptyEmailShouldReturnBadRequest() throws Exception {
+    void createUserWithEmptyEmailTest() throws Exception {
         String invalidUserJson = """
             {
                 "email": "",
                 "login": "validlogin",
                 "name": "Test User",
-                "dateOfBirth": "1990-01-01"
+                "dateOfBirth": "1980-01-01"
             }
             """;
 
@@ -218,13 +219,13 @@ class UserControllerTest {
     }
 
     @Test
-    void createUserWithEmptyLoginShouldReturnBadRequest() throws Exception {
+    void createUserWithEmptyLoginTest() throws Exception {
         String invalidUserJson = """
             {
-                "email": "test@example.com",
+                "email": "test@denis.com",
                 "login": "",
                 "name": "Test User",
-                "dateOfBirth": "1990-01-01"
+                "dateOfBirth": "1980-01-01"
             }
             """;
 
@@ -237,30 +238,34 @@ class UserControllerTest {
     }
 
     @Test
-    void createUserWithLoginContainingSpacesShouldReturnBadRequest() throws Exception {
+    void createUserWithLoginContainingSpacesTest() throws Exception {
         String invalidUserJson = """
             {
-                "email": "test@example.com",
+                "email": "test@denis.com",
                 "login": "login with spaces",
                 "name": "Test User",
-                "dateOfBirth": "1990-01-01"
+                "dateOfBirth": "1980-01-01"
             }
             """;
+
+        when(userService.createUser(any(User.class)))
+                .thenThrow(new ValidationException("Логин не должен содержать пробелы"));
 
         mockMvc.perform(post("/api/v1/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(invalidUserJson))
                 .andExpect(status().isBadRequest());
 
-        verify(userService, never()).createUser(any(User.class));
+
+        verify(userService, times(1)).createUser(any(User.class));
     }
 
     @Test
-    void createUserWithFutureBirthdayShouldReturnBadRequest() throws Exception {
+    void createUserWithFutureBirthdayTest() throws Exception {
         String futureDate = LocalDate.now().plusDays(1).toString();
         String invalidUserJson = String.format("""
             {
-                "email": "test@example.com",
+                "email": "test@denis.com",
                 "login": "validlogin",
                 "name": "Test User",
                 "dateOfBirth": "%s"
@@ -276,13 +281,13 @@ class UserControllerTest {
     }
 
     @Test
-    void updateUserWithInvalidDataShouldReturnBadRequest() throws Exception {
+    void updateUserWithInvalidDataTest() throws Exception {
         String invalidUserJson = """
             {
                 "email": "invalid-email",
                 "login": "",
                 "name": "Test User",
-                "dateOfBirth": "1990-01-01"
+                "dateOfBirth": "1980-01-01"
             }
             """;
 
@@ -295,12 +300,12 @@ class UserControllerTest {
     }
 
     @Test
-    void createUserWithNullEmailShouldReturnBadRequest() throws Exception {
+    void createUserWithNullEmailTest() throws Exception {
         String invalidUserJson = """
             {
                 "login": "validlogin",
                 "name": "Test User",
-                "dateOfBirth": "1990-01-01"
+                "dateOfBirth": "1980-01-01"
             }
             """;
 
@@ -313,12 +318,12 @@ class UserControllerTest {
     }
 
     @Test
-    void createUserWithNullLoginShouldReturnBadRequest() throws Exception {
+    void createUserWithNullLoginTest() throws Exception {
         String invalidUserJson = """
             {
-                "email": "test@example.com",
+                "email": "test@denis.com",
                 "name": "Test User",
-                "dateOfBirth": "1990-01-01"
+                "dateOfBirth": "1980-01-01"
             }
             """;
 

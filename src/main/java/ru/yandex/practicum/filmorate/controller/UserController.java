@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.controller;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.intf.CrudInterface;
 import ru.yandex.practicum.filmorate.model.ErrorResponse;
@@ -29,18 +30,18 @@ public class UserController implements CrudInterface<User> {
     @GetMapping("/{id}")
     public User read(@Valid @PathVariable Long id) {
 
-        log.info("Получение пользователя с id = {}" , id);
+        log.info("Получение пользователя с id = {}",id);
         return userService.getUser(id);
     }
 
     @Override
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public User create(@Valid  @RequestBody User user) {
+    public ResponseEntity<User> create(@Valid  @RequestBody User user) {
 
         log.info("Создание пользователя");
         log.debug("Создание пользователя:{}", user.toString());
-        return userService.createUser(user);
+        User createdUser = userService.createUser(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 
     @Override

@@ -59,7 +59,7 @@ public class UserService {
             return createdUser;
         } catch (ValidationException validationException) {
             log.error(validationException.getMessage());
-            throw new ValidationException(validationException.getMessage());
+            throw  validationException;
         }
     }
 

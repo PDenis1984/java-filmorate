@@ -27,4 +27,13 @@ public class Film {
 
     private Duration duration;
 
+    public void setDuration(int minutes) {
+
+        this.duration = Duration.ofMinutes(minutes);
+    }
+
+    public long getDuration() {
+
+        return  this.duration.toMinutes();
+    }
 }

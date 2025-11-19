@@ -1,15 +1,13 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.intf.CrudInterface;
 import ru.yandex.practicum.filmorate.model.ErrorResponse;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.exception.FilmNotFoundException;
-import ru.yandex.practicum.filmorate.model.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.exception.ValidationException;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
@@ -28,22 +26,23 @@ public class FilmController implements CrudInterface<Film> {
     }
 
     @Override
-    @GetMapping("/films/{id}")
+    @GetMapping("/{id}")
     public Film read(@PathVariable Long id) {
 
-        log.info("Получение фильма с id = {}" , id);
+        log.info("Получение фильма с id = {}",id);
         return filmService.getFilm(id);
     }
 
 
     @PostMapping
     @Override
-    @ResponseStatus(HttpStatus.CREATED)
-    public Film create(@RequestBody Film film) {
+    public ResponseEntity<Film> create(@RequestBody Film film) {
 
         log.info("Добавление фильма");
         log.debug("Добавление фильма:{}", film.toString());
-        return filmService.createFilm(film);
+
+        Film createdFilm = filmService.createFilm(film);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdFilm);
     }
 
 
