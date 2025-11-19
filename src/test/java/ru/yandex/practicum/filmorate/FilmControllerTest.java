@@ -48,7 +48,7 @@ class FilmControllerTest {
                 .name("Test Film")
                 .description("Test description")
                 .releaseDate(LocalDate.of(1980, 1, 1))
-                .duration(Duration.ofMinutes(120))
+                .duration(120)
                 .build();
 
         updatedFilm = Film.builder()
@@ -56,7 +56,7 @@ class FilmControllerTest {
                 .name("Updated Film")
                 .description("Updated description")
                 .releaseDate(LocalDate.of(1980, 1, 1))
-                .duration(Duration.ofMinutes(150))
+                .duration(150)
                 .build();
     }
 
@@ -261,7 +261,7 @@ class FilmControllerTest {
                 .name("Existing Film")
                 .description("Existing description")
                 .releaseDate(LocalDate.of(1990, 1, 1))
-                .duration(Duration.ofMinutes(120))
+                .duration(120)
                 .build();
 
         when(filmService.updateFilm(any(Film.class), eq(1L)))
