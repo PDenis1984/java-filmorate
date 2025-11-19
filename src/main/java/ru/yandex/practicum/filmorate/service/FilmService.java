@@ -48,7 +48,7 @@ public class FilmService {
         }
     }
 
-    public Film updateFilm(Film film, long id) throws ValidationException {
+    public Film updateFilm(Film film, long id) throws FilmNotFoundException, ValidationException {
 
         log.info("Обновление фильма c id = {}", id);
         log.trace("Обновление фильма: {}", film.toString());
@@ -59,12 +59,19 @@ public class FilmService {
         }
         try {
             checkFilmValid(film);
-            filmMap.put(id, film);
+            Film updatedFilm = Film.builder()
+                    .id(id)
+                    .name(film.getName())
+                    .description(film.getDescription())
+                    .duration(Duration.ofMinutes(film.getDuration()))
+                    .releaseDate(film.getReleaseDate())
+                    .build();
+            filmMap.put(id, updatedFilm);
+            return updatedFilm;
         } catch (ValidationException validationException) {
             log.error(validationException.getMessage());
             throw validationException;
         }
-        return film;
     }
 
     public Film getFilm(Long id) {
