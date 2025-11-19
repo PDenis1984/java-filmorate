@@ -8,10 +8,12 @@ public interface CrudInterface<E> {
 
     ResponseEntity<E> create(E e);
 
-    E update(long id, E e);
+    ResponseEntity<E> update(long id, E e);
 
-    List<E> getAll();
+    ResponseEntity<E> update(E e);
 
-     E read(Long id);
+    ResponseEntity<List<E>> getAll();
+
+    E read(Long id);
 
 }

@@ -46,19 +46,32 @@ public class UserController implements CrudInterface<User> {
 
     @Override
     @PutMapping("/{id}")
-    public User update(@PathVariable long id, @Valid @RequestBody User user) {
+    public ResponseEntity<User> update(@PathVariable long id, @Valid @RequestBody User user) {
 
         log.info("Обновление пользователя с id = {}", id);
         log.debug("Обновление пользователя: {}", user.toString());
-        return userService.updateUser(user, id);
+        User updatedUser = userService.updateUser(user, id);
+        return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
+    }
+
+
+    @Override
+    @PutMapping
+    public ResponseEntity<User> update(@Valid @RequestBody User user) {
+
+        log.info("Обновление пользователя с id = {}", user.getId());
+        log.debug("Обновление пользователя: {}", user.toString());
+        User updateUser = userService.updateUser(user, user.getId());
+        return ResponseEntity.status(HttpStatus.OK).body(updateUser);
     }
 
     @Override
     @GetMapping
-    public List<User> getAll() {
+    public ResponseEntity<List<User>> getAll() {
 
         log.info("Получение списка пользователей");
-        return userService.getUsers();
+
+        return ResponseEntity.status(HttpStatus.OK).body(userService.getUsers());
     }
 
     //Exception Handlers

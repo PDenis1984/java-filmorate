@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,19 +49,33 @@ public class FilmController implements CrudInterface<Film> {
 
     @Override
     @PutMapping("/{id}")
-    public Film update(@PathVariable long id, @RequestBody Film film) {
+    public ResponseEntity<Film> update(@PathVariable long id, @RequestBody Film film) {
 
         log.info("Обновление фильма с id = {}", id);
         log.debug("Обновление фильма : {}", film.toString());
-        return filmService.updateFilm(film, id);
+        Film updatedFilm =  filmService.updateFilm(film, id);
+        return  ResponseEntity.status(HttpStatus.OK).body(updatedFilm);
     }
 
     @Override
+    @PutMapping
+    public  ResponseEntity<Film> update(@Valid @RequestBody Film film) {
+
+        log.info("Обновление фильма с id = {}", film.getId());
+        log.debug("Обновление фильма : {}", film.toString());
+
+        Film updatedFilm = filmService.updateFilm(film, film.getId());
+        return  ResponseEntity.status(HttpStatus.OK).body(updatedFilm);
+
+    }
+
+
+    @Override
     @GetMapping
-    public List<Film> getAll() {
+    public ResponseEntity<List<Film>> getAll() {
 
         log.info("Получение списка фильмов");
-        return filmService.getFilms();
+        return ResponseEntity.status(HttpStatus.OK).body(filmService.getFilms());
     }
 
     //Exception Handlers

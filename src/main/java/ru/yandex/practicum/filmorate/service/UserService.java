@@ -66,7 +66,7 @@ public class UserService {
 
     public User updateUser(User user, long id) throws UserNotFoundException, ValidationException {
 
-        log.info("Обновление пользователя c id = {}", id);
+        log.info("Обновление пользователя c id = {}",id);
         log.trace("Обновление пользователя: {}", user.toString());
 
         if (userMap.get(id) == null) {
