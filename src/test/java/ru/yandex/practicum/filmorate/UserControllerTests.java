@@ -63,14 +63,7 @@ class UserControllerTest {
     void createUserWithValidDataTest() throws Exception {
         when(userService.createUser(any(User.class))).thenReturn(validUser);
 
-        String userJson = """
-            {
-                "email": "test@denis.com",
-                "login": "testlogin",
-                "name": "Test User",
-                "dateOfBirth": "1980-01-01"
-            }
-            """;
+        String userJson = "{\"email\": \"test@denis.com\", \"login\": \"testlogin\", \"name\": \"Test User\", \"dateOfBirth\": \"1980-01-01\"}";
 
         mockMvc.perform(post("/api/v1/users")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -111,14 +104,7 @@ class UserControllerTest {
     void updateUserWithValidDataTest() throws Exception {
         when(userService.updateUser(any(User.class), eq(1L))).thenReturn(updatedUser);
 
-        String updatedUserJson = """
-            {
-                "email": "updated@denis.com",
-                "login": "updatedlogin",
-                "name": "Updated User",
-                "dateOfBirth": "1980-01-01"
-            }
-            """;
+        String updatedUserJson = "{\"email\": \"updated@denis.com\", \"login\": \"updatedlogin\", \"name\": \"Updated User\", \"dateOfBirth\": \"1980-01-01\"}";
 
         mockMvc.perform(put("/api/v1/users/1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -136,14 +122,7 @@ class UserControllerTest {
     void updateUserWithNonExistingIdTest() throws Exception {
         when(userService.updateUser(any(User.class), eq(999L))).thenReturn(validUser);
 
-        String userJson = """
-            {
-                "email": "test@denis.com",
-                "login": "testlogin",
-                "name": "Test User",
-                "dateOfBirth": "1980-01-01"
-            }
-            """;
+        String userJson = "{\"email\": \"test@denis.com\", \"login\": \"testlogin\", \"name\": \"Test User\", \"dateOfBirth\": \"1980-01-01\"}";
 
         mockMvc.perform(put("/api/v1/users/999")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -182,14 +161,7 @@ class UserControllerTest {
 
     @Test
     void createUserWithInvalidEmailTest() throws Exception {
-        String invalidUserJson = """
-            {
-                "email": "invalid-email",
-                "login": "validlogin",
-                "name": "Test User",
-                "dateOfBirth": "1980-01-01"
-            }
-            """;
+        String invalidUserJson =  "{\"email\": \"invalid-email\", \"login\": \"validlogin\", \"name\": \"Test User\", \"dateOfBirth\": \"1980-01-01\"}";
 
         mockMvc.perform(post("/api/v1/users")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -201,14 +173,7 @@ class UserControllerTest {
 
     @Test
     void createUserWithEmptyEmailTest() throws Exception {
-        String invalidUserJson = """
-            {
-                "email": "",
-                "login": "validlogin",
-                "name": "Test User",
-                "dateOfBirth": "1980-01-01"
-            }
-            """;
+        String invalidUserJson = "{\"email\": \"\", \"login\": \"validlogin\", \"name\": \"Test User\", \"dateOfBirth\": \"1980-01-01\"}";
 
         mockMvc.perform(post("/api/v1/users")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -220,14 +185,7 @@ class UserControllerTest {
 
     @Test
     void createUserWithEmptyLoginTest() throws Exception {
-        String invalidUserJson = """
-            {
-                "email": "test@denis.com",
-                "login": "",
-                "name": "Test User",
-                "dateOfBirth": "1980-01-01"
-            }
-            """;
+        String invalidUserJson = "{\"email\": \"test@denis.com\", \"login\": \"\", \"name\": \"Test User\", \"dateOfBirth\": \"1980-01-01\"}";
 
         mockMvc.perform(post("/api/v1/users")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -239,14 +197,7 @@ class UserControllerTest {
 
     @Test
     void createUserWithLoginContainingSpacesTest() throws Exception {
-        String invalidUserJson = """
-            {
-                "email": "test@denis.com",
-                "login": "login with spaces",
-                "name": "Test User",
-                "dateOfBirth": "1980-01-01"
-            }
-            """;
+        String invalidUserJson = "{\"email\": \"test@denis.com\", \"login\": \"login with spaces\", \"name\": \"Test User\", \"dateOfBirth\": \"1980-01-01\"}";
 
         when(userService.createUser(any(User.class)))
                 .thenThrow(new ValidationException("Логин не должен содержать пробелы"));
@@ -262,15 +213,9 @@ class UserControllerTest {
 
     @Test
     void createUserWithFutureBirthdayTest() throws Exception {
+
         String futureDate = LocalDate.now().plusDays(1).toString();
-        String invalidUserJson = String.format("""
-            {
-                "email": "test@denis.com",
-                "login": "validlogin",
-                "name": "Test User",
-                "dateOfBirth": "%s"
-            }
-            """, futureDate);
+        String invalidUserJson = String.format("{\"email\": \"test@denis.com\", \"login\": \"validlogin\", \"name\": \"Test User\", \"dateOfBirth\": \"%s\"}", futureDate);
 
         mockMvc.perform(post("/api/v1/users")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -282,14 +227,7 @@ class UserControllerTest {
 
     @Test
     void updateUserWithInvalidDataTest() throws Exception {
-        String invalidUserJson = """
-            {
-                "email": "invalid-email",
-                "login": "",
-                "name": "Test User",
-                "dateOfBirth": "1980-01-01"
-            }
-            """;
+        String invalidUserJson = "{\"email\": \"invalid-email\", \"login\": \"\", \"name\": \"Test User\", \"dateOfBirth\": \"1980-01-01\"}";
 
         mockMvc.perform(put("/api/v1/users/1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -301,13 +239,7 @@ class UserControllerTest {
 
     @Test
     void createUserWithNullEmailTest() throws Exception {
-        String invalidUserJson = """
-            {
-                "login": "validlogin",
-                "name": "Test User",
-                "dateOfBirth": "1980-01-01"
-            }
-            """;
+        String invalidUserJson = "{\"login\": \"validlogin\", \"name\": \"Test User\", \"dateOfBirth\": \"1980-01-01\"}";
 
         mockMvc.perform(post("/api/v1/users")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -319,13 +251,7 @@ class UserControllerTest {
 
     @Test
     void createUserWithNullLoginTest() throws Exception {
-        String invalidUserJson = """
-            {
-                "email": "test@denis.com",
-                "name": "Test User",
-                "dateOfBirth": "1980-01-01"
-            }
-            """;
+        String invalidUserJson = "{\"email\": \"test@denis.com\", \"name\": \"Test User\", \"dateOfBirth\": \"1980-01-01\"}";
 
         mockMvc.perform(post("/api/v1/users")
                         .contentType(MediaType.APPLICATION_JSON)

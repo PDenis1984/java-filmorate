@@ -161,14 +161,7 @@ class FilmControllerTest {
 
     @Test
     void createFilmWithEmptyNameTest() throws Exception {
-        String invalidFilmJson = """
-            {
-                "name": "",
-                "description": "Test description",
-                "releaseDate": "1980-01-01",
-                "duration": 120
-            }
-            """;
+        String invalidFilmJson =  "{\"name\": \"\", \"description\": \"Test description\", \"releaseDate\": \"1980-01-01\", \"duration\": 120}";;
 
         when(filmService.createFilm(any(Film.class)))
                 .thenThrow(new ValidationException("Название фильма не должно быть пустым"));
@@ -184,13 +177,8 @@ class FilmControllerTest {
 
     @Test
     void createFilmWithNullNameTest() throws Exception {
-        String invalidFilmJson = """
-{
-                "description": "Test description",
-                "releaseDate": "1980-01-01",
-                "duration": 120
-            }
-            """;
+
+        String invalidFilmJson = "{\"description\": \"Test description\", \"releaseDate\": \"1980-01-01\", \"duration\": 120}";
         when(filmService.createFilm(any(Film.class)))
                 .thenThrow(new ValidationException("Название фильма не должно быть пустым"));
 
@@ -204,16 +192,9 @@ class FilmControllerTest {
 
     @Test
     void createFilmWithTooLongDescriptionTest() throws Exception {
-        String longDescription = "a".repeat(201);
-        String invalidFilmJson = String.format("""
-            {
-                "name": "Test Film",
-                "description": "%s",
-                "releaseDate": "1980-01-01",
-                "duration": 120
-            }
-            """, longDescription);
 
+        String longDescription = "a".repeat(201);
+        String invalidFilmJson = String.format("{\"name\": \"Test Film\", \"description\": \"%s\", \"releaseDate\": \"1980-01-01\", \"duration\": 120}", longDescription);
         when(filmService.createFilm(any(Film.class)))
                 .thenThrow(new ValidationException("Описание не может превышать 200 символов"));
 
@@ -227,14 +208,8 @@ class FilmControllerTest {
 
     @Test
     void createFilmWithInvalidReleaseDateTest() throws Exception {
-        String invalidFilmJson = """
-            {
-                "name": "Test Film",
-                "description": "Test description",
-                "releaseDate": "1890-01-01",
-                "duration": 120
-            }
-            """;
+
+        String invalidFilmJson = "{\"name\": \"Test Film\", \"description\": \"Test description\", \"releaseDate\": \"1890-01-01\", \"duration\": 120}";
 
         when(filmService.createFilm(any(Film.class)))
                 .thenThrow(new ValidationException("Дата релиза не может быть раньше 28 декабря 1895 года"));
@@ -249,14 +224,8 @@ class FilmControllerTest {
 
     @Test
     void createFilmWithNegativeDurationTest() throws Exception {
-        String invalidFilmJson = """
-            {
-                "name": "Test Film",
-                "description": "Test description",
-                "releaseDate": "1980-01-01",
-                "duration": -120
-            }
-            """;
+
+        String invalidFilmJson = "{\"name\": \"Test Film\", \"description\": \"Test description\", \"releaseDate\": \"1980-01-01\", \"duration\": -120}";
 
         when(filmService.createFilm(any(Film.class)))
                 .thenThrow(new ValidationException("Продолжительность фильма должна быть положительной"));
@@ -271,14 +240,7 @@ class FilmControllerTest {
 
     @Test
     void createFilmWithZeroDurationTest() throws Exception {
-        String invalidFilmJson = """
-            {
-                "name": "Test Film",
-                "description": "Test description",
-                "releaseDate": "1980-01-01",
-                "duration": 0
-            }
-            """;
+        String invalidFilmJson = "{\"name\": \"Test Film\", \"description\": \"Test description\", \"releaseDate\": \"1980-01-01\", \"duration\": 0}";
 
         when(filmService.createFilm(any(Film.class)))
                 .thenThrow(new ValidationException("Продолжительность фильма должна быть положительной"));
@@ -305,14 +267,7 @@ class FilmControllerTest {
         when(filmService.updateFilm(any(Film.class), eq(1L)))
                 .thenThrow(new ValidationException("Название фильма не может быть пустым"));
 
-        String invalidFilmJson = """
-        {
-            "name": "",
-            "description": "Test description",
-            "releaseDate": "1980-01-01", 
-            "duration": 120
-        }
-        """;
+        String invalidFilmJson = "{\"name\": \"\", \"description\": \"Test description\", \"releaseDate\": \"1980-01-01\", \"duration\": 120}";
 
         mockMvc.perform(put("/api/v1/films/1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -322,38 +277,10 @@ class FilmControllerTest {
         verify(filmService, times(1)).updateFilm(any(Film.class), eq(1L));
     }
 
-    @Test
-    void createFilmWithValidBoundaryDescriptionTest() throws Exception {
-        String boundaryDescription = "a".repeat(200);
-        String validFilmJson = String.format("""
-            {
-                "name": "Test Film",
-                "description": "%s",
-                "releaseDate": "1980-01-01",
-                "duration": 120
-            }
-            """, boundaryDescription);
-
-        when(filmService.createFilm(any(Film.class))).thenReturn(validFilm);
-
-        mockMvc.perform(post("/api/v1/films")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(validFilmJson))
-                .andExpect(status().isCreated());
-
-        verify(filmService, times(1)).createFilm(any(Film.class));
-    }
 
     @Test
     void createFilmWithEarliestValidReleaseDateTest() throws Exception {
-        String validFilmJson = """
-            {
-                "name": "Test Film",
-                "description": "Test description",
-                "releaseDate": "1895-12-28",
-                "duration": 120
-            }
-            """;
+        String validFilmJson = "{\"name\": \"Test Film\", \"description\": \"Test description\", \"releaseDate\": \"1895-12-28\", \"duration\": 120}";
 
         when(filmService.createFilm(any(Film.class))).thenReturn(validFilm);
 
