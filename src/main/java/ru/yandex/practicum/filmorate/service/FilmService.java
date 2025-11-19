@@ -36,10 +36,9 @@ public class FilmService {
                     .id(filmID)
                     .name(film.getName())
                     .description(film.getDescription())
-                    .duration(Duration.ofMinutes(film.getDuration()))
                     .releaseDate(film.getReleaseDate())
                     .build();
-
+            createdFilm.setDuration(film.getDuration());
             filmMap.put(sequence++, createdFilm);
             return createdFilm;
         } catch (ValidationException validationException) {
@@ -63,9 +62,9 @@ public class FilmService {
                     .id(id)
                     .name(film.getName())
                     .description(film.getDescription())
-                    .duration(Duration.ofMinutes(film.getDuration()))
                     .releaseDate(film.getReleaseDate())
                     .build();
+            updatedFilm.setDuration(film.getDuration());
             filmMap.put(id, updatedFilm);
             return updatedFilm;
         } catch (ValidationException validationException) {

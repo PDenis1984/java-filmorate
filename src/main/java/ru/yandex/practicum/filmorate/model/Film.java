@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.time.Duration;
 import java.time.LocalDate;
 
 /**
@@ -25,15 +24,5 @@ public class Film {
 
     private LocalDate releaseDate;
 
-    private Duration duration;
-
-    public void setDuration(int minutes) {
-
-        this.duration = Duration.ofMinutes(minutes);
-    }
-
-    public long getDuration() {
-
-        return  this.duration.toMinutes();
-    }
+    private long duration;
 }
