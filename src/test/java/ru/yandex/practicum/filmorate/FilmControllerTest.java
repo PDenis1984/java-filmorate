@@ -65,13 +65,13 @@ class FilmControllerTest {
         when(filmService.createFilm(any(Film.class))).thenReturn(validFilm);
 
         String filmJson = """
-            {
+{
                 "name": "Test Film",
                 "description": "Test description",
                 "releaseDate": "1980-01-01",
                 "duration": 290
-            }
-            """;
+}
+           """;
 
         mockMvc.perform(post("/api/v1/films")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -112,12 +112,12 @@ class FilmControllerTest {
         when(filmService.updateFilm(any(Film.class), eq(1L))).thenReturn(updatedFilm);
 
         String updatedFilmJson = """
-            {
+{
                 "name": "Updated Film",
                 "description": "Updated description",
                 "releaseDate": "1980-01-01",
                 "duration": 150
-            }
+}
             """;
 
         mockMvc.perform(put("/api/v1/films/1")
@@ -137,12 +137,12 @@ class FilmControllerTest {
         when(filmService.updateFilm(any(Film.class), eq(999L))).thenReturn(validFilm);
 
         String filmJson = """
-            {
+{
                 "name": "Test Film",
                 "description": "Test description",
                 "releaseDate": "1980-01-01",
                 "duration": 120
-            }
+}
             """;
 
         mockMvc.perform(put("/api/v1/films/999")
@@ -206,7 +206,7 @@ class FilmControllerTest {
     @Test
     void createFilmWithNullNameTest() throws Exception {
         String invalidFilmJson = """
-            {
+{
                 "description": "Test description",
                 "releaseDate": "1980-01-01",
                 "duration": 120
