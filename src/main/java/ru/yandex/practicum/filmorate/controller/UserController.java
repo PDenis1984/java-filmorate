@@ -28,7 +28,6 @@ public class UserController implements CrudInterface<User> {
 
     @Override
     @GetMapping("/{id}")
-    
     public User read(@Valid @PathVariable Long id) {
 
         log.info("Получение пользователя с id = {}", id);
