@@ -55,9 +55,9 @@ public class UserService {
                     .login(user.getLogin())
                     .email(user.getEmail())
                     .id(userID).birthday(user.getBirthday()).build();
-            if (user.getName() == null) {
+            if (user.getName() == null || user.getName().isBlank()) {
 
-               createdUser.setName("");
+               createdUser.setName(user.getLogin());
             } else {
 
                 createdUser.setName(user.getName());
