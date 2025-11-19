@@ -55,9 +55,12 @@ public class UserService {
                     .login(user.getLogin())
                     .email(user.getEmail())
                     .id(userID).birthday(user.getBirthday()).build();
-            if (user.getName() != null) {
+            if (user.getName() == null) {
 
-               createdUser.setName(user.getName());
+               createdUser.setName("");
+            } else {
+
+                createdUser.setName(user.getName());
             }
             userMap.put(userID, createdUser);
             return createdUser;

@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.model;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Past;
@@ -15,7 +14,6 @@ import java.time.LocalDate;
 @Builder
 @EqualsAndHashCode(of = {"id", "login"})
 @AllArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class User {
 
     private final Long id;
