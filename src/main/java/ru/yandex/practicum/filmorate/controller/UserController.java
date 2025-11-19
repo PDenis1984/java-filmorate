@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.intf.CrudInterface;
 import ru.yandex.practicum.filmorate.model.ErrorResponse;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.model.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.exception.UserNotFoundException;
+import ru.yandex.practicum.filmorate.model.exception.ValidationException;
+import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.util.List;
 
@@ -30,13 +30,13 @@ public class UserController implements CrudInterface<User> {
     @GetMapping("/{id}")
     public User read(@Valid @PathVariable Long id) {
 
-        log.info("Получение пользователя с id = {}",id);
+        log.info("Получение пользователя с id = {}", id);
         return userService.getUser(id);
     }
 
     @Override
     @PostMapping
-    public ResponseEntity<User> create(@Valid  @RequestBody User user) {
+    public ResponseEntity<User> create(@Valid @RequestBody User user) {
 
         log.info("Создание пользователя");
         log.debug("Создание пользователя:{}", user.toString());
@@ -50,7 +50,7 @@ public class UserController implements CrudInterface<User> {
 
         log.info("Обновление пользователя с id = {}", id);
         log.debug("Обновление пользователя: {}", user.toString());
-        return userService.updateUser(user,id);
+        return userService.updateUser(user, id);
     }
 
     @Override

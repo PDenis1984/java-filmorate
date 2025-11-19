@@ -13,7 +13,7 @@ import java.time.LocalDate;
  */
 @Data
 @Builder
-@EqualsAndHashCode(of = {"id","name"})
+@EqualsAndHashCode(of = {"id", "name"})
 @AllArgsConstructor
 public class Film {
 

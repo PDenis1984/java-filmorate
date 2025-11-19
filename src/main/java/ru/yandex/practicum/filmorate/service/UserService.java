@@ -29,7 +29,8 @@ public class UserService {
 
         User user = userMap.get(id);
         if (user == null) {
-            log.error("Пользователь с id = {} не найден", id);;
+            log.error("Пользователь с id = {} не найден", id);
+            ;
             throw new UserNotFoundException("Пользователь с id =  " + id + " не найден");
         }
         return user;
@@ -49,7 +50,7 @@ public class UserService {
         try {
             checkUserValid(user);
             long userID = ++sequence;
-            User createdUser =  User.builder()
+            User createdUser = User.builder()
                     .login(user.getLogin())
                     .email(user.getEmail())
                     .name(user.getName())
@@ -59,7 +60,7 @@ public class UserService {
             return createdUser;
         } catch (ValidationException validationException) {
             log.error(validationException.getMessage());
-            throw  validationException;
+            throw validationException;
         }
     }
 
