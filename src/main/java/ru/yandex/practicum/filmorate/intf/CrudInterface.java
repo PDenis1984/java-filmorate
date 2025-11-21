@@ -14,6 +14,6 @@ public interface CrudInterface<E> {
 
     ResponseEntity<List<E>> getAll();
 
-    E read(Long id);
+    ResponseEntity<E> read(Long id);
 
 }

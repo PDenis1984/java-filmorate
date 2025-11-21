@@ -24,10 +24,10 @@ public class FilmController implements CrudInterface<Film> {
 
     @Override
     @GetMapping("/{id}")
-    public Film read(@PathVariable Long id) {
+    public ResponseEntity<Film> read(@PathVariable Long id) {
 
         log.info("Получение фильма с id = {}", id);
-        return filmService.getFilm(id);
+        return ResponseEntity.status(HttpStatus.OK).body(filmService.getFilm(id));
     }
 
 

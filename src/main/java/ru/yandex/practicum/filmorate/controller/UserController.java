@@ -25,10 +25,10 @@ public class UserController implements CrudInterface<User> {
 
     @Override
     @GetMapping("/{id}")
-    public User read(@Valid @PathVariable Long id) {
+    public ResponseEntity<User> read(@Valid @PathVariable Long id) {
 
         log.info("Получение пользователя с id = {}", id);
-        return userService.getUser(id);
+        return ResponseEntity.status(HttpStatus.OK).body(userService.getUser(id));
     }
 
     @Override
