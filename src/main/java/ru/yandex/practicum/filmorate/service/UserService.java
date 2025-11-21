@@ -14,7 +14,7 @@ import java.util.Map;
 @Service
 public class UserService {
 
-    private Map<Long, User> userMap;
+    private final Map<Long, User> userMap;
     private long sequence = 0;
 
 
@@ -50,24 +50,14 @@ public class UserService {
         log.trace("Создание пользователя: {}", user.toString());
         try {
             checkUserValid(user);
-            long userID = ++sequence;
-            User createdUser = User.builder()
-                    .login(user.getLogin())
-                    .email(user.getEmail())
-                    .id(userID).birthday(user.getBirthday()).build();
-            if (user.getName() == null || user.getName().isBlank()) {
-
-               createdUser.setName(user.getLogin());
-            } else {
-
-                createdUser.setName(user.getName());
-            }
-            userMap.put(userID, createdUser);
-            return createdUser;
         } catch (ValidationException validationException) {
             log.error(validationException.getMessage());
             throw validationException;
         }
+        long userId = ++sequence;
+        User createdUser = builUser(user, userId);
+        userMap.put(userId, createdUser);
+        return createdUser;
     }
 
     public User updateUser(User user, long id) throws UserNotFoundException, ValidationException {
@@ -81,24 +71,35 @@ public class UserService {
         }
         try {
             checkUserValid(user);
-            User updatedUser = User.builder()
-                    .login(user.getLogin())
-                    .email(user.getEmail())
-                    .name(user.getName())
-                    .id(id).birthday(user.getBirthday()).build();
-            userMap.put(id, updatedUser);
-            return updatedUser;
         } catch (ValidationException validationException) {
             log.error(validationException.getMessage());
             throw validationException;
         }
+        User updatedUser = builUser(user, user.getId());
+        userMap.put(id, updatedUser);
+        return updatedUser;
     }
 
-    private boolean checkUserValid(User user) throws ValidationException {
+    private void checkUserValid(User user) throws ValidationException {
         //Здесь все проверки должны сработать на контроллере за счет аннотации @valid, кроме пробела в логине
         if (user.getLogin().contains(" ")) {
             throw new ValidationException("Логин не должен содержать пробелы");
         }
-        return true;
+    }
+
+    private User builUser(User user, long userId) {
+
+        User buildedUser = User.builder()
+                .login(user.getLogin())
+                .email(user.getEmail())
+                .id(userId).birthday(user.getBirthday()).build();
+        if (user.getName() == null || user.getName().isBlank()) {
+
+            buildedUser.setName(user.getLogin());
+        } else {
+
+            buildedUser.setName(user.getName());
+        }
+        return buildedUser;
     }
 }

@@ -16,7 +16,7 @@ import java.util.Map;
 
 public class FilmService {
 
-    private Map<Long, Film> filmMap;
+    private final Map<Long, Film> filmMap;
     private long sequence = 0;
 
     public FilmService() {
@@ -31,12 +31,7 @@ public class FilmService {
         try {
             checkFilmValid(film);
             long filmID = ++sequence;
-            Film createdFilm = Film.builder()
-                    .id(filmID)
-                    .name(film.getName())
-                    .description(film.getDescription())
-                    .releaseDate(film.getReleaseDate())
-                    .build();
+            Film createdFilm = buildFilm(film, filmID);
             createdFilm.setDuration(film.getDuration());
             filmMap.put(sequence++, createdFilm);
             return createdFilm;
@@ -57,19 +52,14 @@ public class FilmService {
         }
         try {
             checkFilmValid(film);
-            Film updatedFilm = Film.builder()
-                    .id(id)
-                    .name(film.getName())
-                    .description(film.getDescription())
-                    .releaseDate(film.getReleaseDate())
-                    .build();
-            updatedFilm.setDuration(film.getDuration());
-            filmMap.put(id, updatedFilm);
-            return updatedFilm;
         } catch (ValidationException validationException) {
             log.error(validationException.getMessage());
             throw validationException;
         }
+        Film updatedFilm = buildFilm(film, film.getId());
+        updatedFilm.setDuration(film.getDuration());
+        filmMap.put(id, updatedFilm);
+        return updatedFilm;
     }
 
     public Film getFilm(Long id) {
@@ -86,7 +76,7 @@ public class FilmService {
         return filmMap.values().stream().toList();
     }
 
-    private boolean checkFilmValid(Film film) {
+    private void checkFilmValid(Film film) {
         // здесь проверим все ограничения вручную
         if (film.getName().isBlank()) {
 
@@ -101,7 +91,16 @@ public class FilmService {
 
             throw new ValidationException("Длительность фильма должна быть положительным числом");
         }
+    }
 
-        return true;
+    private Film buildFilm(Film film, long filmID) {
+
+        return  Film.builder()
+                .id(filmID)
+                .name(film.getName())
+                .description(film.getDescription())
+                .releaseDate(film.getReleaseDate())
+                .duration(film.getDuration()).build();
+
     }
 }

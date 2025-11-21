@@ -2,13 +2,14 @@ package ru.yandex.practicum.filmorate;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import ru.yandex.practicum.filmorate.controller.GlobalHandlerException;
 import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.model.exception.UserNotFoundException;
@@ -22,14 +23,16 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(MockitoExtension.class)
+@WebMvcTest(UserController.class)
 class UserControllerTests {
 
+    @Autowired
     private MockMvc mockMvc;
 
-    @Mock
+    @MockBean
     private UserService userService;
 
     @InjectMocks
@@ -40,27 +43,19 @@ class UserControllerTests {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(userController).build();
 
-        validUser = User.builder()
-                .id(1L)
-                .email("test@denis.com")
-                .login("testlogin")
-                .name("Test User")
-                .birthday(LocalDate.of(1980, 1, 1))
+        userController = new UserController(userService);
+        mockMvc = MockMvcBuilders.standaloneSetup(userController)
+                .setControllerAdvice(new GlobalHandlerException()) // Добавьте обработчик исключений
                 .build();
 
-        updatedUser = User.builder()
-                .id(1L)
-                .email("updated@denis.com")
-                .login("updatedlogin")
-                .name("Updated User")
-                .birthday(LocalDate.of(1980, 1, 1))
-                .build();
+        validUser = new User(1L, "test@denis.com", "testlogin", "Test User", LocalDate.of(1980, 1, 1));
+        updatedUser = new User(1L, "updated@denis.com", "updatedLogin", "jupdated", LocalDate.of(1980, 1, 1));
     }
 
     @Test
     void createUserWithValidDataTest() throws Exception {
+
         when(userService.createUser(any(User.class))).thenReturn(validUser);
 
         String userJson = "{\"email\": \"test@denis.com\", \"login\": \"testlogin\", \"name\": \"Test User\", \"birthday\": \"1980-01-01\"}";
@@ -92,19 +87,31 @@ class UserControllerTests {
 
     @Test
     void getUserWithNonExistingIdTest() throws Exception {
+
         when(userService.getUser(999L)).thenThrow(new UserNotFoundException("User not found"));
 
         mockMvc.perform(get("/users/999"))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("User not found"))
+                .andExpect(jsonPath("$.httpCode").value(404));
 
         verify(userService, times(1)).getUser(999L);
     }
 
     @Test
     void updateUserWithValidDataTest() throws Exception {
-        when(userService.updateUser(any(User.class), eq(1L))).thenReturn(updatedUser);
 
-        String updatedUserJson = "{\"email\": \"updated@denis.com\", \"login\": \"updatedlogin\", \"name\": \"Updated User\", \"birthday\": \"1980-01-01\"}";
+        String updatedUserJson = "{\"id\":1,\"email\": \"updated@denis.com\", \"login\": \"updatedlogin\", \"name\": \"Updated User\", \"birthday\": \"1980-01-01\"}";
+
+        User updatedUser = User.builder()
+                .id(1L)
+                .email("updated@denis.com")
+                .login("updatedlogin")
+                .name("Updated User")
+                .birthday(LocalDate.of(1980, 1, 1))
+                .build();
+
+        when(userService.updateUser(any(User.class), eq(1L))).thenReturn(updatedUser);
 
         mockMvc.perform(put("/users/1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -161,7 +168,7 @@ class UserControllerTests {
 
     @Test
     void createUserWithInvalidEmailTest() throws Exception {
-        String invalidUserJson =  "{\"email\": \"invalid-email\", \"login\": \"validlogin\", \"name\": \"Test User\", \"birthday\": \"1980-01-01\"}";
+        String invalidUserJson = "{\"email\": \"invalid-email\", \"login\": \"validlogin\", \"name\": \"Test User\", \"birthday\": \"1980-01-01\"}";
 
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)

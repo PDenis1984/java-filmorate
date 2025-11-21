@@ -1,15 +1,11 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.intf.CrudInterface;
-import ru.yandex.practicum.filmorate.model.ErrorResponse;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.exception.FilmNotFoundException;
-import ru.yandex.practicum.filmorate.model.exception.ValidationException;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import java.util.List;
@@ -30,7 +26,7 @@ public class FilmController implements CrudInterface<Film> {
     @GetMapping("/{id}")
     public Film read(@PathVariable Long id) {
 
-        log.info("Получение фильма с id = {}",id);
+        log.info("Получение фильма с id = {}", id);
         return filmService.getFilm(id);
     }
 
@@ -53,19 +49,19 @@ public class FilmController implements CrudInterface<Film> {
 
         log.info("Обновление фильма с id = {}", id);
         log.debug("Обновление фильма : {}", film.toString());
-        Film updatedFilm =  filmService.updateFilm(film, id);
-        return  ResponseEntity.status(HttpStatus.OK).body(updatedFilm);
+        Film updatedFilm = filmService.updateFilm(film, id);
+        return ResponseEntity.status(HttpStatus.OK).body(updatedFilm);
     }
 
     @Override
     @PutMapping
-    public  ResponseEntity<Film> update(@Valid @RequestBody Film film) {
+    public ResponseEntity<Film> update(@RequestBody Film film) {
 
         log.info("Обновление фильма с id = {}", film.getId());
         log.debug("Обновление фильма : {}", film.toString());
 
         Film updatedFilm = filmService.updateFilm(film, film.getId());
-        return  ResponseEntity.status(HttpStatus.OK).body(updatedFilm);
+        return ResponseEntity.status(HttpStatus.OK).body(updatedFilm);
 
     }
 
@@ -76,21 +72,5 @@ public class FilmController implements CrudInterface<Film> {
 
         log.info("Получение списка фильмов");
         return ResponseEntity.status(HttpStatus.OK).body(filmService.getFilms());
-    }
-
-    //Exception Handlers
-    @ExceptionHandler(ValidationException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleValidationException(ValidationException vEx) {
-
-        log.error("Ошибка валидации: {}", vEx.getMessage());
-        return new ErrorResponse(vEx.getMessage(), 400);
-    }
-
-    @ExceptionHandler(FilmNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleUserFilmNotFoundException(FilmNotFoundException uEx) {
-        log.warn("Фильм не найден: {}", uEx.getMessage());
-        return new ErrorResponse(uEx.getMessage(), 404);
     }
 }
