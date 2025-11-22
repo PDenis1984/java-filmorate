@@ -33,7 +33,7 @@ public class UserController implements CrudInterface<User> {
 
     @Override
     @PostMapping
-        public ResponseEntity<User> create(@Valid @RequestBody User user) {
+    public ResponseEntity<User> create(@Valid @RequestBody User user) {
 
         log.info("Создание пользователя");
         log.debug("Создание пользователя:{}", user.toString());

@@ -16,6 +16,7 @@ import java.util.Map;
 
 public class FilmService {
 
+    private static final LocalDate DATE_OF_BORN_CINEMA = LocalDate.of(1895, 12, 25);
     private final Map<Long, Film> filmMap;
     private long sequence = 0;
 
@@ -28,17 +29,11 @@ public class FilmService {
 
         log.info("Добавление фильма");
         log.debug("Добавление фильма: {}", film.toString());
-        try {
-            checkFilmValid(film);
-            long filmID = ++sequence;
-            Film createdFilm = buildFilm(film, filmID);
-            createdFilm.setDuration(film.getDuration());
-            filmMap.put(sequence++, createdFilm);
-            return createdFilm;
-        } catch (ValidationException validationException) {
-            log.error(validationException.getMessage());
-            throw validationException;
-        }
+        checkFilmValid(film);
+        long filmID = ++sequence;
+        Film createdFilm = buildFilm(film, filmID);
+        filmMap.put(sequence++, createdFilm);
+        return createdFilm;
     }
 
     public Film updateFilm(Film film, long id) throws FilmNotFoundException, ValidationException {
@@ -50,12 +45,7 @@ public class FilmService {
             log.error("Фильм с id = {} не найден. Создаем Фильм", id);
             throw new FilmNotFoundException("Фильм с id = " + id + " не найден");
         }
-        try {
-            checkFilmValid(film);
-        } catch (ValidationException validationException) {
-            log.error(validationException.getMessage());
-            throw validationException;
-        }
+        checkFilmValid(film);
         Film updatedFilm = buildFilm(film, film.getId());
         updatedFilm.setDuration(film.getDuration());
         filmMap.put(id, updatedFilm);
@@ -78,16 +68,22 @@ public class FilmService {
 
     private void checkFilmValid(Film film) {
         // здесь проверим все ограничения вручную
-        if (film.getName().isBlank()) {
+        if (film.getName() == null || film.getName().isBlank()) {
 
             throw new ValidationException("Название фильма не может быть пустым");
-        } else if (film.getDescription().length() > 200) {
+        } else if (film.getDescription() != null) {
 
-            throw new ValidationException("Длина описания должна быть менее 200 символов");
-        } else if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 25))) {
+            if (film.getDescription().length() > 200) {
+
+                throw new ValidationException("Длина описания должна быть менее 200 символов");
+            }
+        } else if (film.getReleaseDate() == null) {
+
+            throw new ValidationException("Дата релиза фильма не должна быть пустой");
+        } else if (film.getReleaseDate().isBefore(DATE_OF_BORN_CINEMA)) {
 
             throw new ValidationException("Дата релиза фильма не ранее 28 декабря 1895 года");
-        } else if (film.getDuration() < 0) {
+        } else if (film.getDuration() <= 0) {
 
             throw new ValidationException("Длительность фильма должна быть положительным числом");
         }

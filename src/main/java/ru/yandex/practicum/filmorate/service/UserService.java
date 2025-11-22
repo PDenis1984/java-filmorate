@@ -48,12 +48,9 @@ public class UserService {
 
         log.info("Создание пользователя");
         log.trace("Создание пользователя: {}", user.toString());
-        try {
-            checkUserValid(user);
-        } catch (ValidationException validationException) {
-            log.error(validationException.getMessage());
-            throw validationException;
-        }
+
+        checkUserValid(user);
+
         long userId = ++sequence;
         User createdUser = builUser(user, userId);
         userMap.put(userId, createdUser);
@@ -62,19 +59,16 @@ public class UserService {
 
     public User updateUser(User user, long id) throws UserNotFoundException, ValidationException {
 
-        log.info("Обновление пользователя c id = {}",id);
+        log.info("Обновление пользователя c id = {}", id);
         log.trace("Обновление пользователя: {}", user.toString());
 
         if (userMap.get(id) == null) {
             log.info("Пользователь с id = {} не найден.", id);
             throw new UserNotFoundException("Пользователь с id = " + id + " не найден");
         }
-        try {
-            checkUserValid(user);
-        } catch (ValidationException validationException) {
-            log.error(validationException.getMessage());
-            throw validationException;
-        }
+
+        checkUserValid(user);
+
         User updatedUser = builUser(user, user.getId());
         userMap.put(id, updatedUser);
         return updatedUser;
