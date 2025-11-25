@@ -1,7 +1,10 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.intf.InMemoryFilmInterface;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.exception.ValidationException;
@@ -13,16 +16,16 @@ import java.util.Map;
 
 @Slf4j
 @Service
-
+@Data
 public class FilmService {
 
     private static final LocalDate DATE_OF_BORN_CINEMA = LocalDate.of(1895, 12, 25);
-    private final Map<Long, Film> filmMap;
-    private long sequence = 0;
 
-    public FilmService() {
+    @Autowired
+    private InMemoryFilmInterface inMemoryFilmStorage;
+    public FilmService(InMemoryFilmInterface cInMemoryFilmInterface) {
 
-        this.filmMap = new HashMap<>();
+        this.inMemoryFilmStorage = cInMemoryFilmInterface;
     }
 
     public Film createFilm(Film film) throws ValidationException {
@@ -30,9 +33,7 @@ public class FilmService {
         log.info("Добавление фильма");
         log.debug("Добавление фильма: {}", film.toString());
         checkFilmValid(film);
-        long filmID = ++sequence;
-        Film createdFilm = buildFilm(film, filmID);
-        filmMap.put(sequence++, createdFilm);
+        Film createdFilm = inMemoryFilmStorage.createFilm(film);
         return createdFilm;
     }
 
@@ -94,14 +95,4 @@ public class FilmService {
         }
     }
 
-    private Film buildFilm(Film film, long filmID) {
-
-        return Film.builder()
-                .id(filmID)
-                .name(film.getName())
-                .description(film.getDescription())
-                .releaseDate(film.getReleaseDate())
-                .duration(film.getDuration()).build();
-
-    }
 }

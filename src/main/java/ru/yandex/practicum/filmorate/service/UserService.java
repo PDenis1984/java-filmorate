@@ -17,7 +17,6 @@ public class UserService {
     private final Map<Long, User> userMap;
     private long sequence = 0;
 
-
     public UserService() {
 
         this.userMap = new HashMap<>();

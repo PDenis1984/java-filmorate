@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Past;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Data
 @Builder
@@ -15,6 +16,7 @@ import java.time.LocalDate;
 public class User {
 
     private final Long id;
+    private final Set<Long> userSet;
 
     @NotBlank(message = "Электронная почта не может быть пустой и должна содержать символ @")
     @Email

@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 /**
  * Film.
@@ -17,6 +18,7 @@ import java.time.LocalDate;
 public class Film {
 
     private final Long id;
+    private final Set<Long> likeSet;
 
     private String name;
 
@@ -25,4 +27,9 @@ public class Film {
     private LocalDate releaseDate;
 
     private long duration;
+
+    public void setLike(long filmId) {
+
+        this.likeSet.add(filmId);
+    }
 }
