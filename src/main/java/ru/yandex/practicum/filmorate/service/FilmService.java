@@ -94,5 +94,15 @@ public class FilmService {
             throw new ValidationException("Длительность фильма должна быть положительным числом");
         }
     }
+    private Film buildFilm(Film film, long filmID) {
+
+        return Film.builder()
+                .id(filmID)
+                .name(film.getName())
+                .description(film.getDescription())
+                .releaseDate(film.getReleaseDate())
+                .duration(film.getDuration()).build();
+
+    }
 
 }

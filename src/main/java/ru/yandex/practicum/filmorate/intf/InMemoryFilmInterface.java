@@ -6,11 +6,11 @@ import java.util.List;
 
 public interface InMemoryFilmInterface {
 
-    Film addLike(Film film);
-    Film creeateFilm(Film film);
+
+    Film createFilm(Film film);
     Film updatedFilm(Film film);
-    boolean addLike(long filmId);
-    boolean deleteLike(long filmId);
+    boolean addLike(long filmId, long userId);
+    boolean deleteLike(long filmId, long userId);
     List<Film> getTop10Films();
     Film getFilm(long filmId);
     List<Film> getAllFilms();
